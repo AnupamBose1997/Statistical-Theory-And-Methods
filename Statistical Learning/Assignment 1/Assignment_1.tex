@@ -1,0 +1,1090 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={MATH5743M: Statistical Learning: Assessed Practical 1 - Predicting the Olympic Games},
+  pdfauthor={Anupam Bose},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifluatex
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{MATH5743M: Statistical Learning: Assessed Practical 1 -
+Predicting the Olympic Games}
+\author{Anupam Bose}
+\date{Semester 2 2022}
+
+\begin{document}
+\maketitle
+
+Predicting the Olympic Games
+
+We will investigate the medals won by 71 countries in year 2008 in
+Beijing, 2012 in London and 2016 in in Rio. The dataset contains
+countries who have won at least one gold medal in each of the last three
+games. It contains data of their population, GDP (in billions of US
+dollars) and number of medals won in those years.
+
+We will use multivariate regression method to predict number of medals
+won by training the model using various methods.
+
+\hypertarget{task-1}{%
+\subsection{Task 1:}\label{task-1}}
+
+The libraries to import to do further analysis on data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(Metrics)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'Metrics' was built under R version 4.1.3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(MASS)}
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'tidyverse' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
+\end{verbatim}
+
+\begin{verbatim}
+## v ggplot2 3.3.5     v purrr   0.3.4
+## v tibble  3.1.6     v dplyr   1.0.7
+## v tidyr   1.1.4     v stringr 1.4.0
+## v readr   2.1.1     v forcats 0.5.1
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'ggplot2' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'tibble' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'tidyr' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'readr' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'purrr' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'dplyr' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'stringr' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'forcats' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+## x dplyr::select() masks MASS::select()
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(sf)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'sf' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Linking to GEOS 3.9.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tinytex)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'tinytex' was built under R version 4.1.2
+\end{verbatim}
+
+The data has been imported into a dataframe (df) by using the
+\textbf{read.csv} function.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{df }\OtherTok{=} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"medal\_pop\_gdp\_data\_statlearn.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+The first 6 rows of our data will give us some idea about it.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{head}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Country     GDP Population Medal2008 Medal2012 Medal2016
+## 1    Algeria  188.68   37100000         2         1         2
+## 2  Argentina  445.99   40117096         6         4         4
+## 3    Armenia   10.25    3268500         6         3         4
+## 4  Australia 1371.76   22880619        46        35        29
+## 5 Azerbaijan   63.40    9111100         7        10        18
+## 6    Bahamas    7.79     353658         2         1         2
+\end{verbatim}
+
+Now, let's look into summary statistics of our data:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(df)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Country               GDP             Population          Medal2008     
+##  Length:71          Min.   :    6.52   Min.   :3.537e+05   Min.   :  1.00  
+##  Class :character   1st Qu.:   51.52   1st Qu.:5.513e+06   1st Qu.:  2.00  
+##  Mode  :character   Median :  229.53   Median :1.673e+07   Median :  6.00  
+##                     Mean   :  903.25   Mean   :7.384e+07   Mean   : 13.11  
+##                     3rd Qu.:  704.37   3rd Qu.:4.958e+07   3rd Qu.: 13.50  
+##                     Max.   :15094.00   Max.   :1.347e+09   Max.   :110.00  
+##    Medal2012       Medal2016     
+##  Min.   :  1.0   Min.   :  1.00  
+##  1st Qu.:  3.0   1st Qu.:  3.00  
+##  Median :  6.0   Median :  7.00  
+##  Mean   : 13.3   Mean   : 13.44  
+##  3rd Qu.: 13.0   3rd Qu.: 15.00  
+##  Max.   :104.0   Max.   :121.00
+\end{verbatim}
+
+Linear models are a type of model that describes a response variable as
+a linear combination of predictor variables.Multiple regression is an
+extension of simple linear regression. It is used when we want to
+predict the value of a variable based on the value of two or more other
+variables. The variable we want to predict is called the dependent
+variable (or sometimes, the outcome, target or criterion variable). The
+variables we are using to predict the value of the dependent variable
+are called the independent variables (or sometimes, the predictor,
+explanatory or regressor variables).
+
+The multiple linear regression for Y as a function of X is given by the
+following equation:
+
+\[Y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon, \ \epsilon \sim N(0, \sigma^2)\]
+
+where,
+
+\begin{itemize}
+\tightlist
+\item
+  \(x_1\) and \(x_2\) are input variables
+\item
+  A scalar constant -- \(\beta_0\)
+\item
+  \(\beta_1\), \(\beta_2\) are regression coefficients
+\item
+  A residual \(\epsilon\) is unknown, but assumed to be normally
+  distributed with zero mean and unknown variance:
+\end{itemize}
+
+\[\epsilon \sim(0, \sigma^2)\]
+
+\begin{itemize}
+\tightlist
+\item
+  \(Y\) is the target variable
+\end{itemize}
+
+In R, we will use glm() function to fit generalized linear models,
+specified by giving a symbolic description of the linear predictor and a
+description of the error distribution. Generalized linear model (GLM) is
+a generalization of ordinary linear regression that allows for response
+variables that have error distribution models other than a normal
+distribution like Gaussian distribution.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model\_train }\OtherTok{=} \FunctionTok{glm}\NormalTok{(Medal2012 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Population }\SpecialCharTok{+}\NormalTok{ GDP , }\AttributeTok{data=}\NormalTok{ df)}
+\FunctionTok{summary}\NormalTok{(model\_train)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = Medal2012 ~ Population + GDP, data = df)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -20.568   -5.961   -2.462    3.932   60.121  
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 6.076e+00  1.500e+00   4.051 0.000133 ***
+## Population  5.247e-09  7.193e-09   0.729 0.468225    
+## GDP         7.564e-03  7.325e-04  10.326 1.45e-15 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for gaussian family taken to be 132.1562)
+## 
+##     Null deviance: 28402.8  on 70  degrees of freedom
+## Residual deviance:  8986.6  on 68  degrees of freedom
+## AIC: 553.19
+## 
+## Number of Fisher Scoring iterations: 2
+\end{verbatim}
+
+Here we have considered two predictor variables which is population and
+GDP. Medal2012 is our target variable. The key points to note from the
+summary are:
+
+\begin{itemize}
+\tightlist
+\item
+  The regression coefficient of the predictor variable population is
+  \(5.247 \times 10^{-9}\) which is very small with the standard error
+  of \(7.193 \times 10^{-9}\). The P-value is 0.468 which is quite large
+  \((0.4682 \gg 0.05)\). This shows that the population of the country
+  is statistically insignificant with regards to country's medal count.
+\item
+  On the other hand, the regression coefficient of the predictor
+  variable GDP is \(7.564 \times 10^{−3}\) which is relatively large
+  with the standard error of \(7.325 \times e^{-4}\). The P-value is of
+  it is \(1.45 \times 10^{-15}\) which is quite small and is less than
+  0.05 \((1.45 \times 10^{-15} \ll 0.05)\). It tells that the GDP of a
+  country is statistically significant and does impact country's medal
+  count.
+\item
+  The intercept is \(6.076\).
+\end{itemize}
+
+To confirm the significance of the predictor variables we calculate
+confidence interval of their coefficient which is given by:
+\[\textrm{C.I.: Estimate} \pm t_c \times \textrm{Standard Error}\]
+
+The t-statistic value\((t_c)\) can be calculated by using \(qt\)
+function. We have 71 data points with one intercept and two regression
+coefficients. Therefore, the number of degrees of freedom will be 71-3 =
+68. With \(95\%\) confidence interval for which \(P(t > t_c) = 0.975\),
+\(t_c\) is calculated.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#t{-}statistic Value }
+\NormalTok{tc }\OtherTok{=} \FunctionTok{qt}\NormalTok{(}\AttributeTok{p=}\FloatTok{0.975}\NormalTok{, }\AttributeTok{df=}\DecValTok{68}\NormalTok{)}
+
+\CommentTok{\#Confidence Interval of population}
+\NormalTok{pop\_ci }\OtherTok{=} \FunctionTok{summary}\NormalTok{(model\_train)}\SpecialCharTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{, }\DecValTok{1}\NormalTok{] }\SpecialCharTok{+}
+  \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{)}\SpecialCharTok{*}\NormalTok{tc}\SpecialCharTok{*}\FunctionTok{summary}\NormalTok{(model\_train)}\SpecialCharTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{]}
+\FunctionTok{print}\NormalTok{(pop\_ci)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] -9.105934e-09  1.959943e-08
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Confidence Interval of gdp}
+\NormalTok{gdp\_ci }\OtherTok{=} \FunctionTok{summary}\NormalTok{(model\_train)}\SpecialCharTok{$}\NormalTok{coefficients[}\DecValTok{3}\NormalTok{, }\DecValTok{1}\NormalTok{] }\SpecialCharTok{+}
+  \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{)}\SpecialCharTok{*}\NormalTok{tc}\SpecialCharTok{*}\FunctionTok{summary}\NormalTok{(model\_train)}\SpecialCharTok{$}\NormalTok{coefficients[}\DecValTok{3}\NormalTok{, }\DecValTok{2}\NormalTok{]}
+\FunctionTok{print}\NormalTok{(gdp\_ci)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.006102319 0.009025843
+\end{verbatim}
+
+The following observation is made from the confidence intervals:
+
+\begin{itemize}
+\tightlist
+\item
+  The confidence interval of the coefficient of the variable
+  population\((\beta_1)\) shows that \(0\) lies in its range. This
+  confirms the insignificance of the variable with regards to medal
+  count. when \(\beta_1=0\), it has no impact on the target variable.
+\item
+  The confidence interval of the coefficient of the variable
+  gdp\((\beta_2)\) is positive and \(0\) does not lie in its range. The
+  values are quite small but it shows some significance. Hence, it does
+  impact our target variable relatively.
+\end{itemize}
+
+Considering no change in country's GDP and population, the trained model
+can now be used to predict medal count for the year 2016(Medal2016)
+using predict function. The first 10 predicted vs observed values of
+medal count has been shown below.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Testing model with prediction}
+\NormalTok{model\_test}\OtherTok{=}\NormalTok{df[,}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{)]}
+\NormalTok{pred}\OtherTok{=} \FunctionTok{predict}\NormalTok{(model\_train, }\AttributeTok{newdata =}\NormalTok{ model\_test)}
+\NormalTok{df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Pred\_Medal2016=}\FunctionTok{round}\NormalTok{(pred)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(Medal2016,Pred\_Medal2016)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{head}\NormalTok{(}\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Medal2016 Pred_Medal2016
+## 1          2              8
+## 2          4             10
+## 3          4              6
+## 4         29             17
+## 5         18              7
+## 6          2              6
+## 7          2              6
+## 8          9              7
+## 9          6             10
+## 10        19             26
+\end{verbatim}
+
+The plot of predicted vs observed value of Medal2016 gives better
+insights. The regression line is also fitted in the plot. To see the
+data points better the axes are log transformed. The plot shows that the
+data points are quite away from the regression line. The model isn't
+performing good but decently.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Plot with log transformed axes}
+\FunctionTok{ggplot}\NormalTok{(}\AttributeTok{data=}\NormalTok{df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{pred, }\AttributeTok{y=}\NormalTok{Medal2016,}\AttributeTok{label =}\NormalTok{ Country)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Observed VS Predicted Medal Count for 2016"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{trans=}\StringTok{\textquotesingle{}log10\textquotesingle{}}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{trans=}\StringTok{\textquotesingle{}log10\textquotesingle{}}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Predicted Medal Count for 2016"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Observed Medal Count for 2016"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{geom\_abline}\NormalTok{(}\AttributeTok{slope =} \DecValTok{1}\NormalTok{, }\AttributeTok{intercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{col =} \StringTok{\textquotesingle{}red\textquotesingle{}}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\AttributeTok{size=}\FloatTok{1.5}\NormalTok{,}\AttributeTok{nudge\_y =} \FloatTok{0.05}\NormalTok{,  }\AttributeTok{check\_overlap =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment_1_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+Boxplot of the absolute difference between the predicted and observed
+values shows 4 outliers. It can be known by finding the 75th quantile
+and Interquantile range of it using function quantile()
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Boxplot of Absolute error }
+\FunctionTok{boxplot}\NormalTok{(}\FunctionTok{abs}\NormalTok{(pred }\SpecialCharTok{{-}}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Medal2016))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment_1_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Quantile}
+\FunctionTok{quantile}\NormalTok{(}\FunctionTok{abs}\NormalTok{(pred }\SpecialCharTok{{-}}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Medal2016))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         0%        25%        50%        75%       100% 
+##  0.5705314  2.4987819  5.0037617  6.6167195 42.2044909
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Outliers of Absolute errors: }
+\CommentTok{\#Values Beyond [75th Quantile +(1.5*IQR)]}
+
+\FloatTok{6.61} \SpecialCharTok{+} \FloatTok{1.5}\SpecialCharTok{*}\FunctionTok{IQR}\NormalTok{(}\FunctionTok{abs}\NormalTok{(pred }\SpecialCharTok{{-}}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Medal2016))  }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 12.78691
+\end{verbatim}
+
+Hence, following 4 countries are outliers with Great Britain having the
+highest absolute error:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Countries with Absolute Error Outliers}
+\NormalTok{df }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(Country,Medal2016) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Absolute\_Error =} \FunctionTok{abs}\NormalTok{(pred }\SpecialCharTok{{-}}\NormalTok{ Medal2016)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{pred=}\FunctionTok{round}\NormalTok{(pred)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(Country,Medal2016,pred,Absolute\_Error) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Absolute\_Error=}\FunctionTok{round}\NormalTok{(Absolute\_Error)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(Absolute\_Error}\SpecialCharTok{\textgreater{}}\FloatTok{12.786}\NormalTok{)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(Absolute\_Error))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              Country Medal2016 pred Absolute_Error
+## 1      Great Britain        67   25             42
+## 2 Russian Federation        56   21             35
+## 3              India         2   27             25
+## 4             France        42   27             15
+\end{verbatim}
+
+The model's accuracy can be determined by finding mean absolute error
+using function \(mae()\) and Root mean squared error using function
+\(rmse()\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Mean Absolute Error and Root Mean Squared Error}
+\FunctionTok{mae}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Medal2016,pred)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 6.104344
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{rmse}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Medal2016,pred)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 9.112593
+\end{verbatim}
+
+The value of mean absolute error and RMSE is \(6.1043\) and \(9.11\)
+respectively which shows the model is performing decently.
+
+\hypertarget{task-2}{%
+\subsection{Task 2:}\label{task-2}}
+
+We repeat the task \(1\) but with log-transformed medal count in 2012 to
+check and compare the performance of the model with the previous one.
+
+The benefits of the logarithmic transformation are:
+
+\begin{itemize}
+\tightlist
+\item
+  Reduces overfitting of data.
+\item
+  Less computational power is required.
+\item
+  Helps if the distribution is skewed by transforming it.
+\item
+  Improves linearity between predictor and target variables.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{log\_of\_Medal2012}\OtherTok{=}\FunctionTok{log}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Medal2012)}
+\NormalTok{log\_model\_train }\OtherTok{=} \FunctionTok{glm}\NormalTok{(log\_of\_Medal2012 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Population }\SpecialCharTok{+}\NormalTok{ GDP , }\AttributeTok{data=}\NormalTok{ df)}
+\FunctionTok{summary}\NormalTok{(log\_model\_train)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = log_of_Medal2012 ~ Population + GDP, data = df)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -1.73090  -0.75630   0.02616   0.77789   2.22198  
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 1.569e+00  1.263e-01  12.422  < 2e-16 ***
+## Population  1.105e-10  6.058e-10   0.182    0.856    
+## GDP         3.161e-04  6.170e-05   5.123 2.68e-06 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for gaussian family taken to be 0.9376449)
+## 
+##     Null deviance: 96.505  on 70  degrees of freedom
+## Residual deviance: 63.760  on 68  degrees of freedom
+## AIC: 201.85
+## 
+## Number of Fisher Scoring iterations: 2
+\end{verbatim}
+
+The following observations could be made from the model:
+
+\begin{itemize}
+\tightlist
+\item
+  The regression coefficient of the predictor variable population is
+  \(1.105 \times 10^{-10}\) which is very small with the standard error
+  of \(6.058 \times 10^{-10}\). The P-value is \(0.856\) which is quite
+  large\((0.856 \gg 0.05)\). This shows that the population of the
+  country is statistically insignificant with regards to country's medal
+  count.
+\item
+  On the other hand, the regression coefficient of the predictor
+  variable GDP is \(3.161 \times 10^{−4}\) which is relatively large
+  with the standard error of \(6.170 \times 10^{-5}\). The P-value is of
+  it is \(2.68 \times 10^{-6}\) which is quite small and is less than
+  0.05\((2.68 \times 10^{-6} \ll 0.05)\). It tells that the GDP of a
+  country is statistically significant and does impact country's medal
+  count.
+\item
+  The intercept is \(1.569\).
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tc }\OtherTok{\textless{}{-}} \FunctionTok{qt}\NormalTok{(}\AttributeTok{p=}\FloatTok{0.975}\NormalTok{, }\AttributeTok{df=}\DecValTok{68}\NormalTok{)}
+\CommentTok{\#Confidence Interval of population}
+\NormalTok{pop\_ci\_log }\OtherTok{\textless{}{-}} \FunctionTok{summary}\NormalTok{(log\_model\_train)}\SpecialCharTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{, }\DecValTok{1}\NormalTok{] }\SpecialCharTok{+}
+  \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{)}\SpecialCharTok{*}\NormalTok{tc}\SpecialCharTok{*}\FunctionTok{summary}\NormalTok{(log\_model\_train)}\SpecialCharTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{]}
+\FunctionTok{print}\NormalTok{(pop\_ci\_log)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] -1.098446e-09  1.319455e-09
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Confidence Interval of gdp}
+\NormalTok{gdp\_ci\_log }\OtherTok{=} \FunctionTok{summary}\NormalTok{(log\_model\_train)}\SpecialCharTok{$}\NormalTok{coefficients[}\DecValTok{3}\NormalTok{, }\DecValTok{1}\NormalTok{] }\SpecialCharTok{+}
+  \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{)}\SpecialCharTok{*}\NormalTok{tc}\SpecialCharTok{*}\FunctionTok{summary}\NormalTok{(log\_model\_train)}\SpecialCharTok{$}\NormalTok{coefficients[}\DecValTok{3}\NormalTok{, }\DecValTok{2}\NormalTok{]}
+\FunctionTok{print}\NormalTok{(gdp\_ci\_log)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0001929751 0.0004392284
+\end{verbatim}
+
+The following observation is made from the confidence intervals:
+
+\begin{itemize}
+\tightlist
+\item
+  The confidence interval of the coefficient of the variable
+  population\((\beta_1)\) shows that \(0\) lies in its range. This
+  confirms the insignificance of the variable with regards to medal
+  count. when \(\beta_1=0\), it has no impact on the target variable.
+\item
+  The confidence interval of the coefficient of the variable
+  gdp\((\beta_2)\) is positive and \(0\) does not lie in its range. The
+  values are quite small but it shows some significance. Hence, it does
+  impact our target variable relatively.
+\end{itemize}
+
+Considering no change in country's GDP and population, the trained model
+can now be used to predict medal count for the year 2016(Medal2016)
+using predict function. The first 10 predicted vs observed values of
+medal count has been shown below.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{log\_df }\OtherTok{\textless{}{-}}\NormalTok{ df[,}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{)]}
+\NormalTok{log\_predictions }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{(}\FunctionTok{predict}\NormalTok{(log\_model\_train, }\AttributeTok{newdata =}\NormalTok{ log\_df))}
+\NormalTok{df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Pred\_Medal2016=}\FunctionTok{round}\NormalTok{(log\_predictions)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(Medal2016,Pred\_Medal2016)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{head}\NormalTok{(}\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Medal2016 Pred_Medal2016
+## 1          2              5
+## 2          4              6
+## 3          4              5
+## 4         29              7
+## 5         18              5
+## 6          2              5
+## 7          2              5
+## 8          9              5
+## 9          6              6
+## 10        19             11
+\end{verbatim}
+
+The plot of predicted vs observed value of Medal2016 gives better
+insights. The regression line is also fitted in the plot. To see the
+data points better the axes are log transformed. The plot shows that the
+data points are again away from the regression line. The performance of
+the model has not improved compared to the previous one. Hence, the log
+transformation of the target variable does not improve the model.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Plot with log transformed axes}
+\FunctionTok{ggplot}\NormalTok{(}\AttributeTok{data=}\NormalTok{df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{log\_predictions, }\AttributeTok{y=}\NormalTok{Medal2016,}\AttributeTok{label =}\NormalTok{ Country)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Observed VS Predicted Medal Count for 2016"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{trans=}\StringTok{\textquotesingle{}log10\textquotesingle{}}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{trans=}\StringTok{\textquotesingle{}log10\textquotesingle{}}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Predicted Medal Count for 2016"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Observed Medal Count for 2016"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{geom\_abline}\NormalTok{(}\AttributeTok{slope =} \DecValTok{1}\NormalTok{, }\AttributeTok{intercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{col =} \StringTok{\textquotesingle{}red\textquotesingle{}}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\AttributeTok{size=}\FloatTok{1.5}\NormalTok{,}\AttributeTok{nudge\_y =} \FloatTok{0.05}\NormalTok{,  }\AttributeTok{check\_overlap =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment_1_files/figure-latex/unnamed-chunk-15-1.pdf}
+We again find Outliers by calculating 75th quantile and interquantile
+range. This time we get 6 outliers with United States having the highest
+absolute error:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Quantile}
+\FunctionTok{quantile}\NormalTok{(}\FunctionTok{abs}\NormalTok{(log\_predictions }\SpecialCharTok{{-}}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Medal2016))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           0%          25%          50%          75%         100% 
+##   0.09549282   2.19211028   3.89412223   8.76470437 466.15606827
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Outliers of Absolute errors: }
+\CommentTok{\#Values Beyond [75th Quantile +(1.5*IQR)]}
+\FloatTok{8.76} \SpecialCharTok{+} \FloatTok{1.5}\SpecialCharTok{*}\FunctionTok{IQR}\NormalTok{(}\FunctionTok{abs}\NormalTok{(log\_predictions }\SpecialCharTok{{-}}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Medal2016))  }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 18.61889
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Countries with Absolute Error Outliers}
+\NormalTok{df }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(Country,Medal2016) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Absolute\_Error =} \FunctionTok{abs}\NormalTok{(log\_predictions }\SpecialCharTok{{-}}\NormalTok{ Medal2016)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{log\_predictions=}\FunctionTok{round}\NormalTok{(log\_predictions)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(Country,Medal2016,log\_predictions,Absolute\_Error) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Absolute\_Error=}\FunctionTok{round}\NormalTok{(Absolute\_Error)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(Absolute\_Error}\SpecialCharTok{\textgreater{}}\FloatTok{18.619}\NormalTok{)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(Absolute\_Error))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              Country Medal2016 log_predictions Absolute_Error
+## 1      United States       121             587            466
+## 2      Great Britain        67              10             57
+## 3 Russian Federation        56               9             47
+## 4             France        42              12             30
+## 5            Germany        42              15             27
+## 6          Australia        29               7             22
+\end{verbatim}
+
+Mean absolute error and RMSE of the model:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Mean Absolute Error and Root Mean Squared Error}
+\FunctionTok{mae}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Medal2016,pred)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 6.104344
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{rmse}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Medal2016,pred)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 9.112593
+\end{verbatim}
+
+The value of mean absolute error and RMSE is \(13.70\) and \(56.62\)
+respectively which shows the model isn't performing better than the
+previous one.
+
+\hypertarget{task-3}{%
+\subsection{Task 3:}\label{task-3}}
+
+We repeat the task \(1\) by assuming \(Medal2016\) has Poisson
+distribution and compare the performance of the model with the previous
+two models.
+
+The reasons why Poisson Regression model can be considered :
+
+\begin{itemize}
+\tightlist
+\item
+  The model works best if the data is discrete with non-negative integer
+  values.
+\item
+  The outcome are counts of events and occuring randomly at constant
+  rate.
+\item
+  Medals obtained are discrete values with some counts.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Poisson\_Model }\OtherTok{=} \FunctionTok{glm}\NormalTok{(Medal2012 }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Population }\SpecialCharTok{+}\NormalTok{ GDP , }\AttributeTok{data=}\NormalTok{ df,}\AttributeTok{family =} \FunctionTok{poisson}\NormalTok{(}\AttributeTok{link=}\StringTok{\textquotesingle{}log\textquotesingle{}}\NormalTok{))}
+\FunctionTok{summary}\NormalTok{(Poisson\_Model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = Medal2012 ~ Population + GDP, family = poisson(link = "log"), 
+##     data = df)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -4.7459  -2.8253  -1.4710   0.9333  12.4841  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(>|z|)    
+## (Intercept) 2.193e+00  4.034e-02  54.360  < 2e-16 ***
+## Population  6.049e-10  9.131e-11   6.625 3.48e-11 ***
+## GDP         1.715e-04  6.672e-06  25.708  < 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 1331.81  on 70  degrees of freedom
+## Residual deviance:  690.27  on 68  degrees of freedom
+## AIC: 962.24
+## 
+## Number of Fisher Scoring iterations: 5
+\end{verbatim}
+
+The following observations could be made from the model:
+
+\begin{itemize}
+\tightlist
+\item
+  The regression coefficient of the predictor variable population is
+  \(6.049 \times 10^{-10}\) which is very small with the standard error
+  of \(9.131 \times 10^{-11}\). The P-value is \(3.48 \times 10^{-11}\)
+  which is quite small\((3.48 \times 10^{-11} \ll 0.05)\). This shows
+  that the population of the country is statistically significant with
+  regards to country's medal count.
+\item
+  Also, the regression coefficient of the predictor variable GDP is
+  \(1.715 \times 10^{−4}\) which is relatively large with the standard
+  error of \(6.672 \times 10^{-6}\). The P-value is of it is less than
+  \(2 \times 10^{-16}\) which is quite small and is less than
+  0.05\((2 \times 10^{-16} \ll 0.05)\). It tells that the GDP of a
+  country is statistically significant and does impact country's medal
+  count.
+\item
+  The intercept is \(2.193\).
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tc }\OtherTok{=} \FunctionTok{qt}\NormalTok{(}\AttributeTok{p=}\FloatTok{0.975}\NormalTok{, }\AttributeTok{df=}\DecValTok{68}\NormalTok{)}
+\CommentTok{\#Confidence Interval of population}
+\NormalTok{pop\_ci\_poi }\OtherTok{=} \FunctionTok{summary}\NormalTok{(Poisson\_Model)}\SpecialCharTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{, }\DecValTok{1}\NormalTok{] }\SpecialCharTok{+}
+  \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{)}\SpecialCharTok{*}\NormalTok{tc}\SpecialCharTok{*}\FunctionTok{summary}\NormalTok{(Poisson\_Model)}\SpecialCharTok{$}\NormalTok{coefficients[}\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{]}
+\FunctionTok{print}\NormalTok{(pop\_ci\_poi)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4.226817e-10 7.870806e-10
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Confidence Interval of gdp}
+\NormalTok{gdp\_ci\_poi }\OtherTok{=} \FunctionTok{summary}\NormalTok{(Poisson\_Model)}\SpecialCharTok{$}\NormalTok{coefficients[}\DecValTok{3}\NormalTok{, }\DecValTok{1}\NormalTok{] }\SpecialCharTok{+}
+  \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{)}\SpecialCharTok{*}\NormalTok{tc}\SpecialCharTok{*}\FunctionTok{summary}\NormalTok{(Poisson\_Model)}\SpecialCharTok{$}\NormalTok{coefficients[}\DecValTok{3}\NormalTok{, }\DecValTok{2}\NormalTok{]}
+\FunctionTok{print}\NormalTok{(gdp\_ci\_poi)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0001582207 0.0001848499
+\end{verbatim}
+
+The following observation is made from the confidence intervals:
+
+\begin{itemize}
+\tightlist
+\item
+  The confidence interval of the coefficient of the variable
+  population\((\beta_1)\) is positive and \(0\) does not lie in its
+  range.The values are extremely small but it does shows some
+  significance. This confirms the significance of the variable with
+  regards to medal count.
+\item
+  The confidence interval of the coefficient of the variable
+  gdp\((\beta_2)\) is positive and again \(0\) does not lie in its
+  range. The values are quite small but it shows some significance.
+  Hence, it does impact our target variable. The values also confirms
+  that GDP is more significant than population.
+\end{itemize}
+
+Considering no change in country's GDP and population, the trained model
+can now be used to predict medal count for the year 2016(Medal2016)
+using predict function. The first 10 predicted vs observed values of
+medal count has been shown below.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Testing model with prediction}
+\NormalTok{poi\_df }\OtherTok{\textless{}{-}}\NormalTok{ df[,}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{)]}
+\NormalTok{poi\_predictions}\OtherTok{=} \FunctionTok{predict}\NormalTok{(Poisson\_Model, }\AttributeTok{newdata =}\NormalTok{ poi\_df, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)}
+\NormalTok{df }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Pred\_Medal2016=}\FunctionTok{round}\NormalTok{(poi\_predictions)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(Medal2016,Pred\_Medal2016)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{head}\NormalTok{(}\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Medal2016 Pred_Medal2016
+## 1          2              9
+## 2          4             10
+## 3          4              9
+## 4         29             11
+## 5         18              9
+## 6          2              9
+## 7          2              9
+## 8          9              9
+## 9          6             10
+## 10        19             15
+\end{verbatim}
+
+The plot of predicted vs observed value of Medal2016 will again give
+better insights. The regression line is also fitted in the plot. To see
+the data points better the axes are log transformed.
+
+The plot shows that the data points are again quite away from the
+regression line. There are very few data points which are lying on it.
+The model is performing quite poorly. The slope of the regression line
+is also more than the previous models.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Plot with log transformed axes}
+\FunctionTok{ggplot}\NormalTok{(}\AttributeTok{data=}\NormalTok{df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{poi\_predictions, }\AttributeTok{y=}\NormalTok{Medal2016,}\AttributeTok{label =}\NormalTok{ Country)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{ggtitle}\NormalTok{(}\StringTok{"Observed VS Predicted Medal Count for 2016"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{trans=}\StringTok{\textquotesingle{}log10\textquotesingle{}}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{trans=}\StringTok{\textquotesingle{}log10\textquotesingle{}}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{"Predicted Medal Count for 2016"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{ylab}\NormalTok{(}\StringTok{"Observed Medal Count for 2016"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{geom\_abline}\NormalTok{(}\AttributeTok{slope =} \DecValTok{1}\NormalTok{, }\AttributeTok{intercept =} \DecValTok{0}\NormalTok{, }\AttributeTok{col =} \StringTok{\textquotesingle{}red\textquotesingle{}}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\AttributeTok{size=}\FloatTok{1.5}\NormalTok{,}\AttributeTok{nudge\_y =} \FloatTok{0.05}\NormalTok{,  }\AttributeTok{check\_overlap =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment_1_files/figure-latex/unnamed-chunk-21-1.pdf}
+We again find outliers by calculating 75th quantile and interquantile
+range.
+
+we have 7 outliers with Great Britain having the highest absolute error:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Quantile}
+\FunctionTok{quantile}\NormalTok{(}\FunctionTok{abs}\NormalTok{(poi\_predictions }\SpecialCharTok{{-}}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Medal2016))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          0%         25%         50%         75%        100% 
+##  0.08789888  3.26988408  6.08625971  8.33430151 52.87573293
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Outliers of Absolute errors: }
+\CommentTok{\#Values Beyond [75th Quantile +(1.5*IQR)]}
+
+\FloatTok{8.33} \SpecialCharTok{+} \FloatTok{1.5}\SpecialCharTok{*}\FunctionTok{IQR}\NormalTok{(}\FunctionTok{abs}\NormalTok{(poi\_predictions }\SpecialCharTok{{-}}\NormalTok{ df}\SpecialCharTok{$}\NormalTok{Medal2016))  }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 15.92663
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Countries with Absolute Error Outliers}
+\NormalTok{df }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{select}\NormalTok{(Country,Medal2016) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Absolute\_Error =} \FunctionTok{abs}\NormalTok{(poi\_predictions }\SpecialCharTok{{-}}\NormalTok{ Medal2016)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{poi\_predictions=}\FunctionTok{round}\NormalTok{(poi\_predictions)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{select}\NormalTok{(Country,Medal2016,poi\_predictions,Absolute\_Error) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(Absolute\_Error}\SpecialCharTok{\textgreater{}}\FloatTok{15.93}\NormalTok{)}\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(Absolute\_Error))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              Country Medal2016 poi_predictions Absolute_Error
+## 1      Great Britain        67              14       52.87573
+## 2 Russian Federation        56              13       42.55866
+## 3             France        42              15       26.99578
+## 4            Germany        42              17       24.62374
+## 5              India         2              26       24.07765
+## 6      United States       121             144       23.29245
+## 7          Australia        29              11       17.50083
+\end{verbatim}
+
+Mean absolute error and RMSE of the model:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Mean Absolute Error and Root Mean Squared Error}
+\FunctionTok{mae}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Medal2016,poi\_predictions)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 7.846745
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{rmse}\NormalTok{(df}\SpecialCharTok{$}\NormalTok{Medal2016,poi\_predictions)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 11.8049
+\end{verbatim}
+
+The value of mean absolute error and RMSE is \(7.85\) and \(11.80\)
+respectively.
+
+\end{document}

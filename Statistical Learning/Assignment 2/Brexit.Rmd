@@ -1,0 +1,230 @@
+---
+title: "MATH5743M: Statistical Learning: Assessed Practical 2 - Brexit"
+author: "Anupam Bose, 201570198, School of Mathematics"
+date: "Semester 2 2022"
+output: pdf_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+On June 23, 2016, the United Kingdom held a national referendum to determine whether it should leave the European Union ('Brexit'). The result, a win for the Leave campaign, surprised many political commentators, who had expected that people would vote to Remain.
+Based on the ages, earnings, education, and class of different electoral wards, the Guardian newspaper outlined some apparent demographic tendencies in the vote. 
+
+The dataset contains five possible input variables that could have influenced the decision to leave or stay in the European Union. We also have the target variable $voteBrexit$ which is answer to the question, "Did the electoral ward vote for Brexit?"
+Hence, it is either of the two values: TRUE/FALSE.
+
+By evaluating the model and selecting the optimal combination of input variables, we will explore the data using a logistic regression model to determine which input variables are relevant for explaining the output variable. In addition, determining which input variables have a significant impact on the output variable.
+
+The libraries to import to do further analysis on data
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(Metrics)
+library(MASS)
+library(tidyverse)
+library(sf)
+library(tinytex)
+```
+The data has been imported into a dataframe (df) by using the **read.csv** function.
+```{r}
+df = read.csv("brexit.csv")
+```
+The first 6 rows of our data will give us some idea about it.
+```{r}
+head(df)
+```
+Now, let's look into summary statistics of our data:
+```{r}
+summary(df)
+```
+Based on prior observations of a data set, logistic regression will be used which is a statistical analytic approach for predicting a binary outcome, such as TRUE or FALSE. It analyses the relationship between one or more existing independent variables to predict a dependent data variable. It helps in the classification of data into discrete classes by examining the link between a set of labelled data. It takes the given dataset and learns a linear relationship before adding non-linearity in the form of the Sigmoid function.
+
+To compute **logistic regression**, use the R function glm() (generalised linear model). The parameter $family = binomial$ must be specified to tell R that we want to fit logistic regression.
+
+logistic regression performed on data to find relevant input variables:
+
+```{r}
+log_reg_model <- glm(voteBrexit ~., family = binomial, data = df)
+print(summary(log_reg_model))
+```
+The points to note from the summary:
+\begin{itemize}
+\item The P-value of all the input variables are less than 0.05 which makes all of them significant in predicting the target variable $voteBrexit$.
+\item The variable $withHigherEd$ has lowest P-value and highest magnitude of the coefficient($-26.7443$) making it the most significant variable in predicting the target variable $voteBrexit$.
+\item The variable $notBornUK$ has the lowest magnitude of the coefficient($5.69$) making it the least significant variable in predicting the target variable $voteBrexit$.
+\end{itemize}
+
+
+Correlation Matrix:
+```{r}
+cor_mat <- df[, c(1,2,3,4,5,6)]
+round(cor(cor_mat),2)
+```
+The result shows the correlation between all the variables in our dataset. Here we can see that the input variable $abc1$ is highly correlated with $withHigherEd$. The value of which is $0.89$.
+
+However, this will not suffice to bring our findings to a conclusion. To increase our confidence in our results, we must perform **cross-validation**. There are $344$ observations in total. $50\%$ of the data is used to form the training set. The rest of it will be used to form the test set. $seed()$ function is used for reproducibility of the random sample selected.
+
+```{r}
+set.seed(1234)
+idx = sample(1:344, 172)
+train_data = df[idx, ]
+test_data = df[-idx, ]
+```
+There are 5 input variables. Every possible combinations of input variables has been considered,
+$C^5_1 + C^5_2 + C^5_3 + C^5_4 + C^5_5 = 31$
+
+Therefore, there are **31 possible combinations* of inputs. 
+
+```{r}
+formulas = c("voteBrexit ~ abc1", "voteBrexit ~ notBornUK", "voteBrexit ~ medianIncome","voteBrexit ~ medianAge","voteBrexit ~ withHigherEd",
+             "voteBrexit ~ abc1 + notBornUK", "voteBrexit ~ abc1 + medianIncome", "voteBrexit ~ abc1 + medianAge","voteBrexit ~ abc1 + withHigherEd",
+             "voteBrexit ~ notBornUK + medianIncome","voteBrexit ~ notBornUK + medianAge","voteBrexit ~ notBornUK + withHigherEd","voteBrexit ~ medianIncome + medianAge",
+             "voteBrexit ~ medianIncome + withHigherEd","voteBrexit ~ medianAge + withHigherEd",
+             "voteBrexit ~ abc1 + notBornUK + medianIncome","voteBrexit ~ notBornUK + medianIncome + medianAge","voteBrexit ~ medianIncome + medianAge + withHigherEd",
+             "voteBrexit ~ abc1 + medianIncome + medianAge","voteBrexit ~ abc1 + medianAge + withHigherEd","voteBrexit ~ abc1 + notBornUK + medianAge",
+             "voteBrexit ~ abc1 + notBornUK + withHigherEd","voteBrexit ~ notBornUK + medianIncome + withHigherEd","voteBrexit ~ notBornUK + medianAge + withHigherEd",
+             "voteBrexit ~ abc1 + medianIncome + withHigherEd",
+             "voteBrexit ~ abc1 + notBornUK + medianIncome + medianAge","voteBrexit ~ notBornUK + medianIncome + medianAge + withHigherEd",
+             "voteBrexit ~ abc1 + medianIncome + medianAge + withHigherEd","voteBrexit ~ abc1 + notBornUK + medianAge + withHigherEd",
+             "voteBrexit ~ abc1 + notBornUK + medianIncome + withHigherEd",
+             "voteBrexit ~ abc1 + notBornUK + medianIncome + medianAge + withHigherEd")
+
+
+```
+The predicted (log-)probabilities of the actual test output is used as the measure of the  prediction quality. The quality of the prediction is stored in a new variable $predictive\_log\_likelihood$ by fitting and predicting with every possible combination of input variables on testing data. 
+
+```{r}
+predictive_log_likelihood = rep(NA, length(formulas))
+for (i in 1:length(formulas)){
+  #Fit logistic regression model with the training data
+  current_model = glm(formula = formulas[i], data = train_data, family = binomial(link = 'logit'))
+  #Evaluate the probability of the test outputs
+  #predicted mean for each new data point
+  ypredict_mean = predict(current_model, test_data,type='response')
+  #Calculating the predictive log probability by summing the
+  #log probability of each output value in the test data
+  predictive_log_likelihood[i] = sum(dbinom(test_data$voteBrexit, ypredict_mean, size=172))
+}
+```
+Plotting the predictive log likelihood gives the following result:
+
+```{r}
+plot(1:length(formulas), predictive_log_likelihood,
+xlab="Model Number", ylab="Log Probability")
+```
+The plot shows that the model 31 has the highest log-probability for the test outputs which considers all the input variables.
+The model 31 is 'voteBrexit ~ abc1 + notBornUK + medianIncome + medianAge + withHigherEd', which tells that all the input variables are important. But it is not sufficient to conclude this as the best model. The model may be wrong and still predict better on a particular dataset.
+
+To make the cross-validation more robust, the whole procedure of choosing a new random split in the data is repeated 100 times. The winning model with particular combination of input variables for every iteration is stored in a new variable $winner$. It stores the model with best predictive log-likelihood in every iteration.
+
+```{r}
+winner = rep(NA, 100)
+#repeating cross validation process 100 times
+for (iteration in 1:100){
+  #Make a new random training data - test data split
+  idx = sample(1:344, 172)
+  train_data = df[idx, ]
+  test_data = df[-idx, ]
+  predictive_log_likelihood = rep(NA, length(formulas))
+  for (i in 1:length(formulas)){
+    #Fit model with the training data
+    current_model = glm(formula = formulas[i], data = train_data, family = binomial(link = 'logit'))
+    #Evaluate the probability of the test outputs
+    #Predicted mean for each new data point
+    ypredict_mean = predict(current_model,test_data,type='response')
+    #Calculating the predictive log probability by summing the
+    #log probability of each output value in the test data
+    predictive_log_likelihood[i] = sum(dbinom(test_data$voteBrexit, ypredict_mean, size=172))
+  }
+  #Winning model for this iteration is stored
+  winner[iteration] = which.max(predictive_log_likelihood)
+}
+```
+Plotting the histogram of how often each model wins gives the following result:
+```{r}
+ggplot(data=as.data.frame(winner), aes(winner)) + 
+  geom_histogram(bins = 30,binwidth = 0.09)+
+  ggtitle("Histogram of model wins")+
+  ylab("Number of wins")+
+  xlab("Model Number")
+```
+The following observations can made from the histogram:
+
+\begin{itemize}
+\item The model 28 turns out to be the winner maximum number of times followed by model 31. There are some occasions when model 30 wins as well.
+\item It is interesting to observe that the model 28 with 4 input variables ($abc1$,$medianIncome$,$medianAge$,$withHigherEd$) outperforms model 31 which consists of all the input variables. Thus, overfitting of the model has been avoided by excluding the input variable which is not so significant in predicting the target variable. 
+\item Previously, we had found out that the model 31 would be a good fit for prediction. But by performing  quite a few cross-validation data splits, we found a better model. It also gives more confidence in choosing it.
+\end{itemize}  
+
+
+Now that we have found the optimum combination of the input variables, we can now train our final model with it:
+
+```{r}
+final_model = glm("voteBrexit ~ abc1 + medianIncome + medianAge + withHigherEd", data = df, family = binomial(link = 'logit'))
+final_model_pred = predict(final_model,test_data,type='response')
+summary(final_model)
+```
+
+The key points to note from the summary are:
+\begin{itemize}
+\item The P-value of all the input variables are less than $0.05$ which makes all the input variables significant to predict target variable.
+\item The coefficient of the predictor variable $withHigherEd$ is $-22.1413$, magnitude of which is highest(strong negative) among all other features with lowest P-value of $1.09 \times 10^{-13}$ and the standard error of $2.98$. Hence, it is most significant factor in favor of votes against brexit, that is to remain in European Union.
+\item The second most important feature is $abc1$ with coefficient of $14.40$ and standard error of $2.57$. As the value is positive, it is second most significant feature for votes to leave from European union(In favor of Brexit).
+\item The coefficient of the predictor variable $medianIncome$ is $-4.61$ with the standard error of $1.76$. This feature also impacts the vote against brexit.
+\item The coefficient of the predictor variable $medianAge$ is $2.72$, magnitude of which is lowest among all other features with the standard error of $0.84$ and P-value of $0.00116$. Hence, the variable is least significant for the vote in the favor of brexit.
+\item The intercept is $1.68$.
+\end{itemize}
+
+To confirm the significance of the predictor variables, we calculate confidence interval of their coefficient:
+$$95\% C.I.: Estimate \pm z_{2.5} \times Standard Error$$
+
+Calculating critical value to find confidence interval:
+```{r}
+#Get critical value of z_2.5% (should be 1.96)
+zc = qnorm(0.975)
+```
+
+
+Confidence interval of $abc1$:
+```{r}
+#C.I of abc1
+#Calculating confidence interval and printing it
+CI_abc1 = summary(final_model)$coefficients[2,1] + c(-1,1)*zc*summary(final_model)$coefficients[2,2]
+print(CI_abc1)
+```
+Confidence interval of $medianIncome$:
+```{r}
+#C.I of medianIncome
+CI_medianIncome = summary(final_model)$coefficients[3,1] + c(-1,1)*zc*summary(final_model)$coefficients[3,2]
+print(CI_medianIncome)
+```
+Confidence interval of $medianAge$:
+```{r}
+#C.I of medianAge
+CI_medianAge = summary(final_model)$coefficients[4,1] + c(-1,1)*zc*summary(final_model)$coefficients[4,2]
+print(CI_medianAge)
+```
+Confidence interval of $medianAge$:
+```{r}
+#C.I of withHigherEd
+CI_HighEd = summary(final_model)$coefficients[5,1] + c(-1,1)*zc*summary(final_model)$coefficients[5,2]
+print(CI_HighEd)
+```
+From the confidence intervals of all the variables we can see that the zero does not lie in any of the intervals. Hence, all the variables are significant and impacts the target variable.
+
+The table below shows the inputs in terms of decreasing effect of importance:
+
+```{r echo=FALSE}
+
+tabl <- "
+| Input Variable | Coefficient      |In favor of brexit  |
+|----------------|:----------------:|-------------------:|
+| withHigherEd   | -22.14           | No                 |
+| abc1           | 14               | Yes                |
+| medianIncome   | -4.61            | No                 |
+| medianAge      | 2.72             | Yes                |
+"
+cat(tabl) # output the table in a format good for HTML/PDF/docx conversion
+```
+The model was picked as the best with high accuracy, but it may not be explaining these predictions correctly because the predictor variables 'withHigherEd' and 'abc1' are highly correlated to each other $(0.89)$, with one strongly opposing Brexit and the other strongly supporting it. When the input variables are highly correlated, this problem arises.
+
+The proportion of residents with a degree, according to the **Guardian website**, is the best predictor of a vote for remain (against Brexit). We came at the same conclusion as the input variable $withHigherEd$, indicates the proportion of residents with a university education. 
+

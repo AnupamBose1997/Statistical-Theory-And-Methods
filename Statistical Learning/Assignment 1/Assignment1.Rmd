@@ -1,0 +1,211 @@
+---
+title: "MATH5743M: Statistical Learning: Assessed Practical 1 - Predicting the Olympic Games"
+author: "Kalyani Sanjay Bhase"
+date: "25/03/2022"
+output: pdf_document
+---
+## Task 1:
+library(tidyverse)
+library(ggplot2)
+library(Metrics)
+library(psych)
+library(caret)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Let's start with importing the dataset and building a data frame before we do any analysis on it.
+```{r import}
+df <- read.csv("medal_pop_gdp_data_statlearn.csv")
+```
+The data file includes the following information for 71 countries that have won at least one gold medal in each of the last three Olympic Games: country, population, GDP, and medals earned in Beijing 2008, London 2012, and Rio 2016.Our data looks as below:
+```{r data}
+head(df)
+```
+The following is a summary of our data:
+```{r summary}
+summary(df)
+```
+A linear model is one in which the input variables and the single output variable are assumed to have a linear relationship. Linear regression is a basic and commonly used type of predictive analysis, which determines how a target variable is affected by the predicted variables. The multiple linear regression for $Y$ as a function of $X$ is:
+$$Y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \epsilon, \ \epsilon \sim N(0, \sigma^2)$$
+where,
+\begin{itemize}
+\item A scalar constant – $\beta_0$
+\item $\beta_1$, $\beta_2$ are regression coefficients
+\item $x_1$ and $x_2$ are input variables
+\item A residual $\epsilon$ which is unknown,but assumed to come from a Normal distribution with zero mean and unknown variance:$$\epsilon \sim(0, \sigma^2)$$
+\item $Y$ is the target variable
+\end{itemize}
+The glm() method in R is used to fit generalised linear models, which are defined by a symbolic description of the linear predictor and a description of the error distribution.
+```{r model}
+LinearReg_model = glm(Medal2012 ~ Population + GDP , data= df)
+summary(LinearReg_model)
+```
+A linear regression model was created for medal count in 2012 from Population and GDP as input variable. Some of the observations were made from the model and they can stated as below:
+\begin{itemize}
+\item The intercept is $6.076$
+\item The regression coefficient value for Population is very low, which is $5.247e-09$ and has P-value of $0.468$ which is very high. This demonstrates that population has a minor impact on a country's medal count and is hence statistically unimportant.
+\item In contrast to Population, the GDP has a regression coefficient value of $7.564e-03$ and has a p-value of $1.45e-15$, which is less than 0.5 and hence is statistically significant. This means that one unit change in GDP produces approximately a $7.564e-03$ increase in the target variable.
+\item The AIC score for the model is $553.19$
+\end{itemize}
+To make predictions for 2016, let us first create a new dataframe with 2016 data.
+```{r new_data}
+library(Metrics)
+#Creating a New Dataframe
+new_df = data.frame(df[,c(2,3)])
+#Creating a Duplicate dataframe to store predicted values
+Games_df = df
+#Predicting the model count for 2016 and 
+predictions= predict(LinearReg_model, newdata = new_df)
+Games_df$predictions = round(predictions,digits = 0)
+print(Games_df$predictions)
+#Plotting the predicted VS actual value for medal count in 2016
+plot(Games_df$predictions, Games_df$Medal2016, col="blue", 
+xlab = "Actual Medal Count", ylab = "Predicted Medal Count",cex = 0.5)
+abline(a=0,b=1, col = "red")
+```
+From the graph plotted above it is evident that most of the countries have earned medals less than 20. Let us transform the axes for further enhanced visibility.
+```{r log}
+library(ggplot2)
+ggplot(data=Games_df, aes(x=predictions, y=Medal2016,label = Country)) +
+  geom_point() +
+  scale_y_continuous(trans='log10')+
+  scale_x_continuous(trans='log10')+
+  xlab("Predictions for Medal Count 2016")+
+  ylab("Medal Count for 2016")+
+  ggtitle("Linear Regression: Actual VS Predicted Medal Count for 2016")+
+  geom_text(size=1.5,nudge_y = 0.05,  check_overlap = TRUE)+
+  geom_abline(slope = 1, intercept = 0, col = 'red')
+```
+We have now transformed the graph for better understanding of the number of medals each country has won using logarithmic function. From the transformed graph, it is evident that majority of the countries have won the medals in the range 0 to 10. The line passing through the data points is the imaginary line on which all data points would have lied if the predicted values were same as the actual values. Countries such as Spain, China, and the United States are quite near to the plotted line with slope 1 and intercept 0, indicating that their actual and predicted medal counts for 2016 are close.
+```{r outliers}
+Games_df$DifferenceInCount <- (Games_df$Medal2016 - Games_df$predictions)
+#sorting the dataframe to obtain outliers
+Games_df = Games_df[with(Games_df, order(DifferenceInCount)),]
+head(x = Games_df[, c(1,6,7,8)])
+tail(x = Games_df[, c(1,6,7,8)])
+```
+The difference between the actual and expected medal count for 2016 is generated and saved in the 'DifferenceInCount' column, which can aid in the detection of outliers. A positive difference suggests that the country did significantly better than expected at the Olympics, whilst a negative difference indicates that the country did poorly. As can be seen from the graph and the difference between actual and predicted results, India, Indonesia, Japan, Mexico, Brazil, and Finland performed poorly at the 2016 Olympics, while countries such as the Great Britain, Russian Federation, France, Australia, New Zealand, and Azerbaijan performed admirably.
+```{r mae}
+#postResample(pre = Games_df$predictions,obs = Games_df$Medal2016)
+mae(Games_df$predictions,Games_df$Medal2016)
+rmse(Games_df$predictions,Games_df$Medal2016)
+```
+The mean absolute error (MAE) is 6.08.This indicates that the average absolute difference between the observed values and the predicted values is 6.08. The RMSE for the model is 9.08 and indicates that the model is a decent. 
+
+## Task 2:
+```{r task2}
+lg=log(df$Medal2012)
+Log_RegModel = glm(lg ~ Population + GDP , data= df)
+summary(Log_RegModel)
+```
+The log of Medal Count in $2012$ was used as target variable to devlop a linear regression model with Population and GDP as input variables. Some of the observations were made from the model and they can stated as below:
+\begin{itemize}
+\item The AIC for the model is $201.85$
+\item The intercept value is $1.569$
+\item The regression coefficient value for Population is very low, which is $1.105e-10$ and has P-value of $0.856$ which is very high. This demonstrates that population has a minor impact on a country's medal count and is hence statistically unimportant.
+\item In contrast to Population, the GDP has a regression coefficient value of $3.161e-04$ and has a p-value of $2.68e-06$, which is less than 0.5 and hence is statistically significant. This means that one unit change in GDP produces approximately a $3.161e-04$ increase in the target variable.
+\end{itemize}
+```{r task2exp}
+#Creating a duplicate of original dataframe to store results of logarithmic model
+LinearReg_model_Log = df
+
+#Predicting the results and storing them in exponential form in the dataframe
+log_predictions= exp(predict(Log_RegModel, newdata = new_df))
+LinearReg_model_Log$log_predictions = round(log_predictions,digits = 0)
+#Plotting the predicted VS actual value for medal count in 2016
+plot(LinearReg_model_Log$log_predictions, LinearReg_model_Log$Medal2016, col="blue",
+xlab = "Actual Medal Count", ylab = "Predicted Medal Count",cex = 0.5)
+abline(a=0,b=1, col = "red")
+```
+
+The results observed here are similar to the one seen in Task 1.
+For better understanding of the plot, let us transform the axes by applying log.
+```{r transformedgraph}
+ggplot(data=LinearReg_model_Log, aes(x=log_predictions, y=Medal2016,label = Country)) +
+  geom_point() +
+  scale_y_continuous(trans='log10')+
+  scale_x_continuous(trans='log10')+
+  xlab("Predictions for Medal Count 2016 on Logarithmic Scale")+
+  ylab("Medal Count for 2016 on Logarithmic Scale")+
+  ggtitle("Log Transformed Linear Regression: Actual VS Predicted Medal Count")+
+  geom_text(size=1.5,nudge_y = 0.05,  check_overlap = TRUE)+
+  geom_abline(slope = 1, intercept = 0, col = 'red')
+```
+From the above transformed graph, we can consider USA to be potential outlier as it lies far away from the imaginary line. With the application of log to the medal count it is seen that the count of majority of countries lies around 10.Let us have a look further at the outliers.
+```{r task2outliers}
+LinearReg_model_Log$DifferenceInCount <- (LinearReg_model_Log$Medal2016 - LinearReg_model_Log$log_predictions)
+#sorting the dataframe to obtain outliers
+LinearReg_model_Log = LinearReg_model_Log[with(LinearReg_model_Log, order(DifferenceInCount)),]
+head(x = LinearReg_model_Log[, c(1,6,7,8)])
+tail(x = LinearReg_model_Log[, c(1,6,7,8)])
+```
+A new column 'DifferenceInCount' is created to store the difference between the predicted medal count and actual medal count for the year $2016$ to identify the outliers as performed in Task $1$. In this case, we can say from the results below that United States, India, Dominican Republic have performed poorly in the Games. Whereas, countries like Great Britain, Russian Federation, France, Germany and Australia performed well, which are similar to the results observed in Task 1.
+```{r task2modelfit}
+mae(LinearReg_model_Log$log_predictions,log(LinearReg_model_Log$Medal2016))
+rmse(LinearReg_model_Log$log_predictions,log(LinearReg_model_Log$Medal2016))
+mae(LinearReg_model_Log$log_predictions,LinearReg_model_Log$Medal2016)
+rmse(LinearReg_model_Log$log_predictions,LinearReg_model_Log$Medal2016)
+```
+The mean absolute error (MAE) for the log transformed model is observed to be $13.71$.This indicates that the average absolute difference between the observed values and the predicted values is $13.71$. The RMSE for the model is $56.60$ and indicates that the model is a decent. 
+
+The logarithmic transformation is most popular transformation used and some potential benefits are:
+\begin{itemize}
+\item to transform the skewed data to normal, hence makes the model a better fit for the data.
+\item It improves the linearity between the target and predictor variables.
+\item Boosts the validity of statistical analysis
+\item Help to reduce overfitting of the data.
+\end{itemize}
+  
+## Task 3:
+
+Poisson Regression model are best used for modeling events where the outcomes are counts or more specifically the data is discrete with non-negative integer values.
+```{r task3model}
+Poisson_model = glm(Medal2012 ~ Population + GDP , data= df,family = poisson(link='log'))
+summary(Poisson_model)
+```
+The Poisson Regression model was created with Medal count in 2012 as target variable and Population and GDP as input variable.
+The following observations were made:
+\begin{itemize}
+\item The AIC returned by the model is $962.24$
+\item The intercept value is $2.193$
+\item The regression coefficient value for Population is very low, which is $6.049e-10$ and has P-value of $3.48e-11$ which is also very low.The low value makes the Population variable statistically important.
+\item In contrast to Population, the GDP has a regression coefficient value of $1.715e-04$ and has a p-value of $2e-16$, which is less than 0.5 and hence is statistically significant. This means that one unit change in GDP produces approximately a $2e-16$ increase in the target variable.
+\end{itemize} 
+```{r task3plot}
+#Creating a duplicate dataframe
+Poisson_df = df
+
+##Predicting the results and storing them in exponential form in the dataframe
+Poisson_df$poi_predictions = round(predict(Poisson_model, newdata = new_df, type = "response"))
+print(Poisson_df$poi_predictions)
+
+plot(Poisson_df$poi_predictions, Poisson_df$Medal2016, col="blue", xlab = "Actual Medal Count", ylab = "Predicted Medal Count",cex = 0.5)
+abline(a=0,b=1, col = "red")
+```
+From the graph, it is evident that majority of the countries have won medals fewer than 20. To see the results more clearly, we have applied logarithmic transformation.
+```{r task3transform}
+ggplot(data=Poisson_df, aes(x=poi_predictions, y=Medal2016,label = Country)) +
+  geom_point() +
+  scale_y_continuous(trans='log10')+
+  scale_x_continuous(trans='log10')+
+  xlab("Predictions for Medal Count 2016")+
+  ylab("Medal Count for 2016")+
+  ggtitle("Poisson Regression: Actual VS Predicted Medal Count for 2016")+
+  geom_text(size=1.5,nudge_y = 0.05,  check_overlap = TRUE)+
+  geom_abline(slope = 1, intercept = 0, col = 'red')
+```
+Here different set of countries are observed to be close to the imaginary line from those seen with Linear regression or Log transformed Linear Regression. With Poisson distribution countries
+like Colombia, China and United States have medal count close to the predicted medal count.
+```{r task3outliers}
+Poisson_df$DifferenceInCount <- (Poisson_df$Medal2016 - Poisson_df$poi_predictions)
+#sorting the dataframe to obtain outliers
+Poisson_df = Poisson_df[with(Poisson_df, order(DifferenceInCount)),]
+head(x = Poisson_df[, c(1,6,7,8)])
+tail(x = Poisson_df[, c(1,6,7,8)])
+```
+A new column 'DifferenceInCount' is created to store the difference between predicted and actual medal count for 2016 to find outliers and India, United States and Indonesia looks like potential outliers that performed poorly and Great Britain, Russian Federation, France performed well at the games. 
+```{r task3mae}
+mae(Poisson_df$poi_predictions,Poisson_df$Medal2016)
+rmse(Poisson_df$poi_predictions,Poisson_df$Medal2016)
+```
+The mean absolute error (MAE) for the log transformed model is observed to be $7.88$.This indicates that the average absolute difference between the observed values and the predicted values is $7.88$. The RMSE for the model is $11.85$ and indicates that the model is a decent. 

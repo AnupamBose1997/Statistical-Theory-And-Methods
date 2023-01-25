@@ -1,0 +1,3 @@
+tinytex::install_tinytex()   
+
+ ##TinyTeX is a custom LaTeX distribution based on TeX Live that is small in size (about 61Mb on macOS/Linux, and 94Mb on Windows when (g)zipped), but functions well in most cases, especially for R users.
